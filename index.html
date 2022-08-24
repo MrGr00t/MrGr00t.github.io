@@ -75,7 +75,7 @@ ga('send', 'pageview');
 <aside class="widget">
 		<h3 class="widget-title">Archives</h3>		
 		<ul>
-			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">1</span></li></ul>
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">2</span></li></ul>
 		</ul>
 	</aside>
 
@@ -86,6 +86,10 @@ ga('send', 'pageview');
 		<h3 class="widget-title">Recent Posts</h3>		
 		<ul>
 			
+          <li>
+            <a href="/%E9%9A%8F%E7%AC%94%E8%AE%B0/ldap%20server%E4%BF%AE%E6%94%B9%EF%BC%8C%E4%BD%BF%E5%BE%97%E4%BB%BB%E6%84%8F%E7%94%A8%E6%88%B7%E9%83%BD%E5%8F%AF%E8%BF%9E%E6%8E%A5/">ldap server修改，使得任意用户都可连接</a>
+          </li>
+        
           <li>
             <a href="/%E6%9D%82%E9%A1%B9/Hexo%20+%20Obsidian%20+%20Github%20Action%20%E8%87%AA%E5%8A%A8%E5%8F%91%E5%B8%83%E5%8D%9A%E5%AE%A2/">Obsdian + Github Action 自动发布博客</a>
           </li>
@@ -98,7 +102,7 @@ ga('send', 'pageview');
 		
   <aside class="widget">
 		<h3 class="widget-title">Tag Cloud</h3>
-        <a href="/tags/%E6%9D%82%E9%A1%B9/" style="font-size: 10px;">杂项</a>
+        <a href="/tags/JAVA/" style="font-size: 10px;">JAVA</a> <a href="/tags/%E6%9D%82%E9%A1%B9/" style="font-size: 10px;">杂项</a> <a href="/tags/%E9%9A%8F%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">随笔记</a>
     </aside>
 
 	
@@ -108,6 +112,72 @@ ga('send', 'pageview');
 		<div id="content" class="site-content">
 			<main id="main" class="site-main" role="main">
 				
+  
+    
+<article class="hentry ">
+		
+		
+			<header class="entry-header">
+				<h2 class="entry-title"><a class="post-title-link" href="/%E9%9A%8F%E7%AC%94%E8%AE%B0/ldap%20server%E4%BF%AE%E6%94%B9%EF%BC%8C%E4%BD%BF%E5%BE%97%E4%BB%BB%E6%84%8F%E7%94%A8%E6%88%B7%E9%83%BD%E5%8F%AF%E8%BF%9E%E6%8E%A5/" rel="bookmark">ldap server修改，使得任意用户都可连接</a></h2>	
+			</header>
+		
+		<!-- .entry-header -->
+		<div class="entry-content">
+			
+				<h2 id="场景说明"><a href="#场景说明" class="headerlink" title="场景说明"></a>场景说明</h2><p>在常见jndi注入利用ldap协议的情况下，默认是不需要用户密码进行链接的，所以绝大多数工具都没有修改过。</p>
+<p>这次在复现某视频会议系统漏洞的时候，就遇到了必须使用账户密码进行链接ldap。</p>
+<p>一开始，在不修改ldap server时，用 nc 监听可以收到请求，但是起了jndi服务死活没请求；试了rmi协议也可以收到请求，但是ldap死活收不到，就算java版本高也是可以收到ldap请求的呀。</p>
+<p>这才开始修改ldap server。</p>
+<h2 id="修改ldap-server"><a href="#修改ldap-server" class="headerlink" title="修改ldap server"></a>修改ldap server</h2><p>首先市面上jndi工具大多使用的是 <code>unboundid-ldapsdk-&lt;version&gt;.jar</code> ，于是我新建了idea的工程，重写了<code>com.unboundid.ldap.listener.InMemoryRequestHandler#processBindRequest</code> 这个方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@Override  </span><br><span class="line">public LDAPMessage processBindRequest(int messageID, BindRequestProtocolOp request, List&lt;Control&gt; controls) &#123;  </span><br><span class="line">    synchronized(this.entryMap) &#123;  </span><br><span class="line">        this.sleepBeforeProcessing();  </span><br><span class="line">        ArrayList&lt;Control&gt; responseControls = new ArrayList(1);  </span><br><span class="line">        responseControls.add(new AuthorizationIdentityResponseControl(&quot;&quot;));  </span><br><span class="line">        return new LDAPMessage(messageID, new BindResponseProtocolOp(0, (String) null, (String) null, (List) null, (ASN1OctetString) null), responseControls);  </span><br><span class="line">  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../images/Pasted%20image%2020220825002801.png"></p>
+<p>接下来就可以编译打包了，复制本身的MANIFEST.MF，重写类文件会有签名问题，所以改成Sealed： false</p>
+<p><img src="/../../images/Pasted%20image%2020220825002857.png"></p>
+<p>配置打包， Modules里添加原有的jar包</p>
+<p><img src="/../../images/Pasted%20image%2020220825003220.png"></p>
+<p>Artifacts入口类写原有jar包的入口类，具体在 Main-Class<br><img src="/../../images/Pasted%20image%2020220825003414.png"></p>
+<p><img src="/../../images/Pasted%20image%2020220825003323.png"></p>
+<h2 id="maven添加jar包"><a href="#maven添加jar包" class="headerlink" title="maven添加jar包"></a>maven添加jar包</h2><p>生成好了之后就可以本地添加jar包，供jndi工具的pom.xml里使用了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn install:install-file -Dfile=PATH/unboundid-ldapsdk-3.1.123.jar  -DgroupId=com.unboundid -DartifactId=unboundid-ldapsdk -Dversion=3.1.123 -Dpackaging=jar</span><br></pre></td></tr></table></figure>
+
+
+<p>记录结束，这种方式修改jar包很方便，比全部反编译香多了</p>
+
+
+				
+				
+			
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-footer">
+			<span class="posted-on font-asesome-icon">
+	<a href="" rel="bookmark">
+	<time class="updated" datetime="2022-08-24T16:00:00.000Z">2022-08-25</time>
+	</a>
+</span>
+
+	<span class="cat-links font-asesome-icon">
+		
+				<a href="/categories/%E9%9A%8F%E7%AC%94%E8%AE%B0/" rel="category tag">/随笔记</a>
+		
+	</span>
+
+
+	<span class="tags-links font-asesome-icon">
+	
+		<a href="/tags/JAVA/" rel="category tag">JAVA</a>
+    
+		<a href="/tags/%E9%9A%8F%E7%AC%94%E8%AE%B0/" rel="category tag">随笔记</a>
+    
+</span>
+		
+
+		</footer><!-- .entry-footer -->
+</article>
+<div class="misc">
+    <a href="#main"><span class="top font-asesome-icon">Top</span></a>
+</div>
   
     
 <article class="hentry ">
@@ -177,7 +247,7 @@ ga('send', 'pageview');
 
 	<span class="cat-links font-asesome-icon">
 		
-				<a href="/categories/" rel="category tag">/</a>
+				<a href="/categories/%E6%9D%82%E9%A1%B9/" rel="category tag">/杂项</a>
 		
 	</span>
 
