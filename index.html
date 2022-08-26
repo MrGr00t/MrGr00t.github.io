@@ -75,7 +75,7 @@ ga('send', 'pageview');
 <aside class="widget">
 		<h3 class="widget-title">Archives</h3>		
 		<ul>
-			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">2</span></li></ul>
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li></ul>
 		</ul>
 	</aside>
 
@@ -86,6 +86,10 @@ ga('send', 'pageview');
 		<h3 class="widget-title">Recent Posts</h3>		
 		<ul>
 			
+          <li>
+            <a href="/%E7%BA%A2%E9%98%9F%E5%B7%A5%E5%85%B7/GetWindowsInfo-%E4%B8%BB%E6%9C%BA%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/">GetWindowsInfo-主机信息收集</a>
+          </li>
+        
           <li>
             <a href="/%E9%9A%8F%E7%AC%94%E8%AE%B0/ldap%20server%E4%BF%AE%E6%94%B9%EF%BC%8C%E4%BD%BF%E5%BE%97%E4%BB%BB%E6%84%8F%E7%94%A8%E6%88%B7%E9%83%BD%E5%8F%AF%E8%BF%9E%E6%8E%A5/">ldap server修改，使得任意用户都可连接</a>
           </li>
@@ -102,7 +106,7 @@ ga('send', 'pageview');
 		
   <aside class="widget">
 		<h3 class="widget-title">Tag Cloud</h3>
-        <a href="/tags/JAVA/" style="font-size: 10px;">JAVA</a> <a href="/tags/%E6%9D%82%E9%A1%B9/" style="font-size: 10px;">杂项</a> <a href="/tags/%E9%9A%8F%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">随笔记</a>
+        <a href="/tags/Go/" style="font-size: 10px;">Go</a> <a href="/tags/JAVA/" style="font-size: 10px;">JAVA</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">工具</a> <a href="/tags/%E6%9D%82%E9%A1%B9/" style="font-size: 10px;">杂项</a> <a href="/tags/%E9%9A%8F%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">随笔记</a>
     </aside>
 
 	
@@ -112,6 +116,68 @@ ga('send', 'pageview');
 		<div id="content" class="site-content">
 			<main id="main" class="site-main" role="main">
 				
+  
+    
+<article class="hentry ">
+		
+		
+			<header class="entry-header">
+				<h2 class="entry-title"><a class="post-title-link" href="/%E7%BA%A2%E9%98%9F%E5%B7%A5%E5%85%B7/GetWindowsInfo-%E4%B8%BB%E6%9C%BA%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" rel="bookmark">GetWindowsInfo-主机信息收集</a></h2>	
+			</header>
+		
+		<!-- .entry-header -->
+		<div class="entry-content">
+			
+				<p>开个坑，写一个打到点之后，针对windows主机的信息收集工具。这篇文章记录工具开发遇到的问题</p>
+<ul>
+<li><p>不需要在手动去敲命令，有些时候会被傻逼杀软检测拦截，之后点就没了。</p>
+</li>
+<li><p>调用Win32 Api方法获得想要信息</p>
+</li>
+</ul>
+<h2 id="功能图"><a href="#功能图" class="headerlink" title="功能图"></a>功能图</h2><p><img src="/../../images/Pasted%20image%2020220826180859.png"></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><pre><code>https://github.com/i11us0ry/winlog/  # 借鉴
+https://github.com/iamacarpet/go-win64api # 用到这个包
+https://razeen.me/posts/breaking-all-the-rules-using-go-to-call-windows-api/ #如何使用go调api
+https://pkg.go.dev/golang.org/x/sys/windows # 对比数据结构
+https://docs.microsoft.com/en-us/windows/win32/api/ # 微软win32文档
+https://golang.hotexamples.com/search # 例子
+</code></pre>
+
+
+				
+				
+			
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-footer">
+			<span class="posted-on font-asesome-icon">
+	<a href="" rel="bookmark">
+	<time class="updated" datetime="2022-08-25T16:00:00.000Z">2022-08-26</time>
+	</a>
+</span>
+
+	<span class="cat-links font-asesome-icon">
+		
+				<a href="/categories/%E7%BA%A2%E9%98%9F%E5%B7%A5%E5%85%B7/" rel="category tag">/红队工具</a>
+		
+	</span>
+
+
+	<span class="tags-links font-asesome-icon">
+	
+		<a href="/tags/Go/" rel="category tag">Go</a>
+    
+		<a href="/tags/%E5%B7%A5%E5%85%B7/" rel="category tag">工具</a>
+    
+</span>
+		
+
+		</footer><!-- .entry-footer -->
+</article>
+<div class="misc">
+    <a href="#main"><span class="top font-asesome-icon">Top</span></a>
+</div>
   
     
 <article class="hentry ">
